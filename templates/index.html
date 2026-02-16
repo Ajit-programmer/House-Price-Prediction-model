@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>California House Price Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 5L35 15V30L20 40L5 30V15L20 5Z" fill="url(#gradient)" stroke="white" stroke-width="2"/>
+                    <defs>
+                        <linearGradient id="gradient" x1="5" y1="5" x2="35" y2="40" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#667eea"/>
+                            <stop offset="1" stop-color="#764ba2"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <span>HouseValue AI</span>
+            </div>
+            <div class="tagline">Powered by Machine Learning</div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1 class="hero-title">Predict California House Prices</h1>
+            <p class="hero-subtitle">Get instant AI-powered predictions with just a few simple inputs</p>
+        </section>
+
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Prediction Form -->
+            <div class="card form-card">
+                <h2 class="card-title">Enter Property Details</h2>
+                <form id="predictionForm">
+                    <!-- Essential Inputs -->
+                    <div class="form-section">
+                        <h3 class="section-title">📍 Location</h3>
+                        <div class="form-group">
+                            <label for="ocean_proximity">Where is the house located?</label>
+                            <select id="ocean_proximity" required>
+                                <option value="">-- Select Location --</option>
+                                <option value="<1H OCEAN">Near Ocean (< 1 hour drive)</option>
+                                <option value="INLAND">Inland</option>
+                                <option value="NEAR OCEAN">Near Ocean</option>
+                                <option value="NEAR BAY">Near Bay</option>
+                                <option value="ISLAND">Island</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Property Details -->
+                    <div class="form-section">
+                        <h3 class="section-title">🏠 Property Details</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="total_rooms">Total Rooms in Property</label>
+                                <input type="number" id="total_rooms" min="1" placeholder="e.g., 6" required>
+                                <span class="input-hint">Including all bedrooms, living rooms, kitchen, etc.</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="total_bedrooms">Number of Bedrooms</label>
+                                <input type="number" id="total_bedrooms" min="1" placeholder="e.g., 3" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="housing_median_age">Age of Property (years)</label>
+                            <input type="number" id="housing_median_age" min="0" max="100" placeholder="e.g., 15" required>
+                        </div>
+                    </div>
+
+                    <!-- Income -->
+                    <div class="form-section">
+                        <h3 class="section-title">💰 Household Income</h3>
+                        <div class="form-group">
+                            <label for="median_income">Annual Household Income</label>
+                            <input type="number" id="median_income" step="0.0001" min="0" placeholder="e.g., 8.5" required>
+                            <span class="input-hint">Enter in tens of thousands: 5 = $50k, 8.5 = $85k, 12 = $120k</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Hidden fields with default values -->
+                    <input type="hidden" id="longitude" value="-122.23">
+                    <input type="hidden" id="latitude" value="37.88">
+                    <input type="hidden" id="population" value="1400">
+                    <input type="hidden" id="households" value="500">
+
+                    <button type="submit" class="btn-primary" id="predictBtn">
+                        <span class="btn-text">Predict House Value</span>
+                        <span class="btn-loader" style="display: none;">
+                            <svg class="spinner" viewBox="0 0 50 50">
+                                <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+                            </svg>
+                        </span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Result Card -->
+            <div class="card result-card" id="resultCard" style="display: none;">
+                <div class="result-icon">🏡</div>
+                <h2 class="result-title">Predicted House Value</h2>
+                <div class="result-value" id="resultValue">$0</div>
+                <p class="result-subtitle">Based on California housing market data</p>
+                <div class="result-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Model</span>
+                        <span class="detail-value">Random Forest</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Accuracy</span>
+                        <span class="detail-value">±$49k RMSE</span>
+                    </div>
+                </div>
+                <button class="btn-secondary" onclick="resetForm()">Make Another Prediction</button>
+            </div>
+
+            <!-- Error Card -->
+            <div class="card error-card" id="errorCard" style="display: none;">
+                <div class="error-icon">⚠️</div>
+                <h2 class="error-title">Prediction Failed</h2>
+                <p class="error-message" id="errorMessage">An error occurred</p>
+                <button class="btn-secondary" onclick="hideError()">Try Again</button>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <section class="features">
+            <h2 class="features-title">Why Use Our Predictor?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Accurate Predictions</h3>
+                    <p>Machine learning model trained on 20,000+ California homes</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Instant Results</h3>
+                    <p>Get predictions in milliseconds with real-time processing</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✨</div>
+                    <h3>Simple Input</h3>
+                    <p>Only 5 essential fields needed for accurate predictions</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Data-Driven</h3>
+                    <p>Based on real California housing market statistics</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Built with Flask, scikit-learn & ❤️</p>
+            <p class="footer-note">For educational purposes only. Not financial advice.</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
