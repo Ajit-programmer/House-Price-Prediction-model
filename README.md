@@ -7,10 +7,6 @@ A beautiful, AI-powered web application that predicts California house prices us
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3-orange.svg)](https://scikit-learn.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## 🌟 Live Demo
-
-**🔗 [Try it Live on Render](https://your-app-name.onrender.com)** *(Update this after deployment)*
-
 ## ✨ Features
 
 - 🎯 **Accurate Predictions** - Random Forest model trained on 20,000+ California homes
